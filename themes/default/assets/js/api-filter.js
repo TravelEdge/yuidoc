@@ -36,8 +36,9 @@ Y.APIFilter = Y.Base.create('apiFilter', Y.Base, [Y.AutoCompleteBase], {
                     var data = Y.YUIDoc.meta[self.get('queryType')],
                         out = [];
                     Y.each(data, function(v) {
-                        if (v.toLowerCase().indexOf(q.toLowerCase()) > -1) {
-                            out.push(v);
+						var x = (typeof v === 'string' ? v : v.name);
+                        if (x.toLowerCase().indexOf(q.toLowerCase()) > -1) {
+                            out.push(x);
                         }
                     });
                     return out;

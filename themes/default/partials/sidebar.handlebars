@@ -2,25 +2,51 @@
     <h2 class="off-left">APIs</h2>
     <div id="api-tabview" class="tabview">
         <ul class="tabs">
-            <li><a href="#api-classes">Classes</a></li>
-            <li><a href="#api-modules">Modules</a></li>
+            <li><a href="#api-frameworks">Framework</a></li>
+            <li><a href="#api-pages">Pages</a></li>
+			<li><a href="#api-widget">Widgets</a></li>
+			<li><a href="#api-toolbox">Toolbox</a></li>
+			<li><a href="#api-classes">All</a></li>
         </ul>
 
         <div id="api-tabview-filter">
             <input type="search" id="api-filter" placeholder="Type to filter APIs">
         </div>
-
+{{#Framework}}
+{{/Framework}}
         <div id="api-tabview-panel">
-            <ul id="api-classes" class="apis classes">
+			<ul id="api-framework" class="apis modules">
+				<li><a href="{{projectRoot}}modules/Framework.html">About</a></li>
+            {{#Framework}}
+                <li><a href="{{../projectRoot}}classes/{{name}}.html">{{displayName}}</a></li>
+            {{/Framework}}
+            </ul>
+			
+			<ul id="api-pages" class="apis modules">
+				<li><a href="{{projectRoot}}modules/Page.html">About</a></li>
+			{{#Page}}
+                <li><a href="{{../projectRoot}}classes/{{name}}.html">{{displayName}}</a></li>
+            {{/Page}}
+            </ul>
+			
+            <ul id="api-widgets" class="apis modules">
+				<li><a href="{{projectRoot}}modules/Widget.html">About</a></li>
+            {{#Widget}}
+                <li><a href="{{../projectRoot}}classes/{{name}}.html">{{displayName}}</a></li>
+            {{/Widget}}
+            </ul>
+
+            <ul id="api-toolbox" class="apis modules">
+				<li><a href="{{projectRoot}}modules/Toolbox.html">About</a></li>
+            {{#Toolbox}}
+                <li><a href="{{../projectRoot}}modules/{{name}}.html">{{displayName}}</a></li>
+            {{/Toolbox}}
+            </ul>
+			
+			<ul id="api-classes" class="apis classes">
             {{#classes}}
                 <li><a href="{{../projectRoot}}classes/{{name}}.html">{{displayName}}</a></li>
             {{/classes}}
-            </ul>
-
-            <ul id="api-modules" class="apis modules">
-            {{#allModules}}
-                <li><a href="{{../projectRoot}}modules/{{name}}.html">{{displayName}}</a></li>
-            {{/allModules}}
             </ul>
         </div>
     </div>

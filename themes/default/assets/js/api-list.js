@@ -9,7 +9,11 @@ var Lang   = Y.Lang,
     inputNode      = Y.one('#api-filter'),
     modulesNode    = Y.one('#api-modules'),
     tabviewNode    = Y.one('#api-tabview'),
-
+	frameworkNode    = Y.one('#api-framework'),
+	pageNode    = Y.one('#api-pages'),
+	widgetNode    = Y.one('#api-widgets'),
+	toolboxNode    = Y.one('#api-toolbox'),
+	
     tabs = APIList.tabs = {},
 
     filter = APIList.filter = new Y.APIFilter({
@@ -30,6 +34,12 @@ var Lang   = Y.Lang,
             results: onSearchResults
         }
     }),
+	
+	focusManager = APIList.focusManager = tabviewNode.plug(Y.Plugin.NodeFocusManager, {
+        circular   : true,
+        descendants: '#api-filter, .yui3-tab-panel-selected .api-list-item a, .yui3-tab-panel-selected .result a',
+        keys       : {next: 'down:40', previous: 'down:38'}
+    }).focusManager,
 
     tabview = APIList.tabview = new Y.TabView({
         srcNode  : tabviewNode,
@@ -41,11 +51,7 @@ var Lang   = Y.Lang,
         }
     }),
 
-    focusManager = APIList.focusManager = tabviewNode.plug(Y.Plugin.NodeFocusManager, {
-        circular   : true,
-        descendants: '#api-filter, .yui3-tab-panel-selected .api-list-item a, .yui3-tab-panel-selected .result a',
-        keys       : {next: 'down:40', previous: 'down:38'}
-    }).focusManager,
+    
 
     LIST_ITEM_TEMPLATE =
         '<li class="api-list-item {typeSingular}">' +
@@ -97,15 +103,27 @@ tabview.get('panelNode').all('a').each(function (link) {
 
 // -- Private Functions --------------------------------------------------------
 function getFilterResultNode() {
-    return filter.get('queryType') === 'classes' ? classesNode : modulesNode;
+    switch(filter.get('queryType')) {// === 'classes' ? classesNode : modulesNode;
+		case 'Framework':
+			return frameworkNode;
+		case 'Page':
+			return pageNode;
+		case 'Widget':
+			return widgetNode;
+		case 'Toolbox':
+			return toolboxNode;
+		case 'classes':
+			return classesNode;
+	}
+	return null;
 }
 
 // -- Event Handlers -----------------------------------------------------------
 function onFilterResults(e) {
     var frag         = Y.one(Y.config.doc.createDocumentFragment()),
         resultNode   = getFilterResultNode(),
-        typePlural   = filter.get('queryType'),
-        typeSingular = typePlural === 'classes' ? 'class' : 'module';
+        typeSingular = filter.get('queryType'),
+		typePlural   = typeSingular === 'toolbox' ? 'toolboxes' : typeSingular + 's';
 
     if (e.results.length) {
         YArray.each(e.results, function (result) {
@@ -113,7 +131,7 @@ function onFilterResults(e) {
                 rootPath    : APIList.rootPath,
                 displayName : filter.getDisplayName(result.highlighted),
                 name        : result.text,
-                typePlural  : typePlural,
+                typePlural  : 'classes',
                 typeSingular: typeSingular
             }));
         });
@@ -170,9 +188,24 @@ function onSearchResults(e) {
     focusManager.refresh();
 }
 
+
+function tabNameToMeta(t){
+	switch (t) {
+	case 'Pages':
+		return 'Page';
+	case 'Widgets':
+		return 'Widget';
+	case 'All':
+		return 'classes'
+	default:
+		return t;
+	}
+}
+
+
 function onTabSelectionChange(e) {
     var tab  = e.newVal,
-        name = tab.get('label').toLowerCase();
+        name = tab.get('label');//.toLowerCase();
 
     tabs.selected = {
         index: tab.get('index'),
@@ -180,12 +213,12 @@ function onTabSelectionChange(e) {
         tab  : tab
     };
 
-    switch (name) {
+    switch ('modules') {
     case 'classes': // fallthru
     case 'modules':
         filter.setAttrs({
             minQueryLength: 0,
-            queryType     : name
+            queryType     : tabNameToMeta(name)
         });
 
         search.set('minQueryLength', -1);
